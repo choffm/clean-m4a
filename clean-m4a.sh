@@ -8,7 +8,7 @@
 
 function usage() {
     echo "m4a-clean removes all metadata from MP4/m4a audio files."
-    echo "Usage: clean-m4a FILENAME"
+    echo "Usage: clean-m4a filename1 filename2 ..."
     exit
 }
 
