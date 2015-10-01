@@ -20,9 +20,10 @@ function ctrl_c() {
 
 function process_file() {
     
-    if ! [[ $(file "$1") =~ .*IS0\ 14496-12:2003.* ]]; then
+    if ! [[ ($(file "$1") =~ .*IS0\ 14496-12:2003.*) || ($(file "$1") =~ .*Apple\ iTunes.*) ]]; then
         echo Skipping "$1"
     else
+        echo Cleaning file: "$1"
         ALBUM=$(mp4info "$1" | grep -m 1 Album:  | cut -d ':' -f2 | sed -e 's/^ *//' -e 's/ *$//')
         ARTIST=$(mp4info "$1" | grep -m 1 Artist: | cut -d ':' -f2 | sed -e 's/^ *//' -e 's/ *$//')
         ALBUM_ARTIST=$(mp4info "$1" | grep -m 1 "Album Artist:" | cut -d ':' -f2 | sed -e 's/^ *//' -e 's/ *$//')
@@ -38,17 +39,18 @@ function process_file() {
         fi
 
         OUT_FULL_PATH=/tmp/m4aclean/"$OUT_RAND"-"$OUT_FILENAME"
-        nohup MP4Box -single 1 "$1" -out "$OUT_FULL_PATH" &
+        nohup MP4Box -single 1 "$1" -out "$OUT_FULL_PATH" 1>/dev/null 2>&1 &
         wait $!
-        nohup mp4tags -A "$ALBUM" -a "$ARTIST" -i "music" -R "$ALBUM_ARTIST" -s "$TITLE" -t "$TRACK" -T "$TRACKNUM" -y "$YEAR" "$OUT_FULL_PATH" &
+        nohup mp4tags -A "$ALBUM" -a "$ARTIST" -i "music" -R "$ALBUM_ARTIST" -s "$TITLE" -t "$TRACK" -T "$TRACKNUM" -y "$YEAR" "$OUT_FULL_PATH" 1>/dev/null 2>&1 &
         wait $!
         
         if [[ $CANCELED == YES ]]; then
             echo "m4a cleaning canceled by user."
             exit
         else
-            nohup mv "$OUT_FULL_PATH" "$1" &
+            nohup mv "$OUT_FULL_PATH" "$1" 1>/dev/null 2>&1 &
             wait $!
+            echo Cleaning successful!
         fi
 
     fi
