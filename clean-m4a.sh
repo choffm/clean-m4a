@@ -39,9 +39,9 @@ function process_file() {
         fi
 
         OUT_FULL_PATH=/tmp/m4aclean/"$OUT_RAND"-"$OUT_FILENAME"
-        nohup MP4Box -single 1 "$1" -out "$OUT_FULL_PATH" 1>/dev/null 2>&1 &
+        nohup MP4Box -add "$1" "$OUT_FULL_PATH" 1>/dev/null 2>&1 &
         wait $!
-        nohup mp4tags -A "$ALBUM" -a "$ARTIST" -i "music" -R "$ALBUM_ARTIST" -s "$TITLE" -t "$TRACK" -T "$TRACKNUM" -y "$YEAR" "$OUT_FULL_PATH" 1>/dev/null 2>&1 &
+        nohup mp4tags -A "$ALBUM" -a "$ARTIST" -R "$ALBUM_ARTIST" -s "$TITLE" -t "$TRACK" -T "$TRACKNUM" -y "$YEAR" "$OUT_FULL_PATH" 1>/dev/null 2>&1 &
         wait $!
         
         if [[ $CANCELED == YES ]]; then
